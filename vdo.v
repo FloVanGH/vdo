@@ -15,6 +15,8 @@ mut:
 struct State {
 mut:
 	tasks []Task
+	window  &ui.Window = voidptr(0)
+	task_column &ui.Stack = voidptr(0)
 }
 
 fn main() {
@@ -31,14 +33,18 @@ fn main() {
 		]
 	}
 
+	task_column := ui.column({}, tasks(app))
+
 	window := ui.window({
 		width: w_width
 		height: w_height
 		state: app
 		title: w_title
 		mode: .resizable
-	}, [ui.column({}, tasks(app))])
+	}, [ui.column({}, [task_column, ui.button(text: '+', onclick: add_task)])])
 
+	app.window = task_column
+	app.window = window
 	ui.run(window)
 }
 
@@ -53,4 +59,14 @@ fn tasks(app &State) []ui.Widget {
 	}
 
 	return tasks
+}
+
+fn add_task(mut app State, x voidptr) {
+	// new_task := {
+	// 	title: 'new'
+	// 	done: false
+	// }
+	// app.tasks << new_task
+
+	
 }
