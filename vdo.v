@@ -14,9 +14,8 @@ mut:
 
 struct State {
 mut:
-	tasks       []Task
-	window      &ui.Window = voidptr(0)
-	task_column &ui.Stack  = voidptr(0)
+	tasks  []Task
+	window &ui.Window = voidptr(0)
 }
 
 fn main() {
@@ -33,17 +32,18 @@ fn main() {
 		]
 	}
 
-	task_column := ui.column({}, tasks(app))
-
 	window := ui.window({
 		width: w_width
 		height: w_height
 		state: app
 		title: w_title
 		mode: .resizable
-	}, [ui.column({}, [task_column, ui.button(text: '+', onclick: add_task)])])
+	}, [
+		ui.column({ margin_: 8 }, [ui.column({}, tasks(app)),
+		ui.button(text: '+', onclick: add_task),
+	]),
+	])
 
-	app.window = task_column
 	app.window = window
 	ui.run(window)
 }
@@ -52,19 +52,34 @@ fn tasks(app &State) []ui.Widget {
 	mut tasks := []ui.Widget{}
 
 	for task in app.tasks {
-		tasks << ui.row({}, [
-			ui.checkbox(checked: task.done),
-			ui.label(text: task.title),
-		])
+		tasks << entry(task)
 	}
 
 	return tasks
 }
 
-fn add_task(mut app State, x voidptr) {
-	// new_task := {
-	// 	title: 'new'
-	// 	done: false
-	// }
-	// app.tasks << new_task
+fn entry(task Task) &ui.Stack {
+	return ui.row({}, [
+		ui.checkbox(checked: task.done),
+		ui.label(text: task.title),
+	])
+}
+
+fn add_task(mut app State, btn &ui.Button) {
+	new_task := Task{
+		title: 'new'
+		done: false
+	}
+	app.tasks << new_task
+
+	window := btn.ui.window
+	mut s := window.child(0)
+
+	if mut s is ui.Stack {
+		s.add(
+			child: entry(new_task)
+		)
+	}
+
+	window.update_layout()
 }
