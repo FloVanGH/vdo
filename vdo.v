@@ -38,6 +38,7 @@ fn main() {
 		state: app
 		title: w_title
 		mode: .resizable
+		on_scroll: on_scroll
 	}, [
 		ui.column({ margin_: 8 }, [ui.column({}, tasks(app)),
 			ui.button(text: '+', onclick: add_task),
@@ -65,6 +66,15 @@ fn entry(task Task) &ui.Stack {
 	])
 }
 
+fn entries_column(w &ui.Window) ?&ui.Stack {
+	s := w.child(0)
+	if mut s is ui.Stack {
+		return s
+	}
+
+	return error('Cannot find entries column')
+}
+
 fn add_task(mut app State, btn &ui.Button) {
 	new_task := Task{
 		title: 'new'
@@ -73,13 +83,26 @@ fn add_task(mut app State, btn &ui.Button) {
 	app.tasks << new_task
 
 	window := btn.ui.window
-	mut s := window.child(0)
 
-	if mut s is ui.Stack {
-		s.add(
-			child: entry(new_task)
-		)
+	mut s := entries_column(window) or {
+		println(err)
+		return
 	}
 
+	s.add(
+		child: entry(new_task)
+	)
+
 	window.update_layout()
+}
+
+fn on_scroll(e ui.ScrollEvent, w &ui.Window) {
+	mut s := entries_column(w) or {
+		println(err)
+		return
+	}
+
+	s.margins.top -= f32(e.y)
+
+	w.update_layout()
 }
