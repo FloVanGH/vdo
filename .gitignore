@@ -18,3 +18,5 @@ fns.txt
 # To develop examples inside ui folder
 modules
 devel
+
+*.log

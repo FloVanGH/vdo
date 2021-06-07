@@ -40,6 +40,8 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install --quiet -y libglfw3-dev libxi-dev libxcursor-dev
+    - name: Install UI
+      run: ./v install ui
     - name: Build V
       run: |
         make
@@ -64,6 +66,8 @@ jobs:
       run: |
         make
         ./v symlink
+    - name: Install UI
+      run: ./v install ui
     - name: Build V DO
       run: |
         echo 'Build vdo with -prod'
@@ -90,6 +94,8 @@ jobs:
     # otherwise this step and V script won't see V executable.
     - name: Build UI examples
       run: |
+        echo 'Install UI'
+        v install ui
         $env:path += ";$(get-location)"
         echo 'Build vdo with -prod'
         v -prod vdo

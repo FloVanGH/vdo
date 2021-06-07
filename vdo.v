@@ -14,9 +14,9 @@ mut:
 
 struct State {
 mut:
-	tasks []Task
-	window  &ui.Window = voidptr(0)
-	task_column &ui.Stack = voidptr(0)
+	tasks       []Task
+	window      &ui.Window = voidptr(0)
+	task_column &ui.Stack  = voidptr(0)
 }
 
 fn main() {
@@ -67,6 +67,4 @@ fn add_task(mut app State, x voidptr) {
 	// 	done: false
 	// }
 	// app.tasks << new_task
-
-	
 }
