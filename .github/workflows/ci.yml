@@ -40,12 +40,12 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install --quiet -y libglfw3-dev libxi-dev libxcursor-dev
-    - name: Install UI
-      run: ./v install ui
     - name: Build V
       run: |
         make
         sudo ./v symlink
+    - name: Install UI
+      run: v install ui
     - name: Build V DO
       run: |
         echo 'Build vdo with -prod'
@@ -67,7 +67,7 @@ jobs:
         make
         ./v symlink
     - name: Install UI
-      run: ./v install ui
+      run: v install ui
     - name: Build V DO
       run: |
         echo 'Build vdo with -prod'
