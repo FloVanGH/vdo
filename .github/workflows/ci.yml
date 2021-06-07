@@ -94,9 +94,9 @@ jobs:
     # otherwise this step and V script won't see V executable.
     - name: Build UI examples
       run: |
+        $env:path += ";$(get-location)"
         echo 'Install UI'
         v install ui
-        $env:path += ";$(get-location)"
         echo 'Build vdo with -prod'
         v -prod vdo
         echo "=========================="

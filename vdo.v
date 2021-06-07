@@ -40,8 +40,8 @@ fn main() {
 		mode: .resizable
 	}, [
 		ui.column({ margin_: 8 }, [ui.column({}, tasks(app)),
-		ui.button(text: '+', onclick: add_task),
-	]),
+			ui.button(text: '+', onclick: add_task),
+		]),
 	])
 
 	app.window = window
