@@ -1,4 +1,4 @@
-# vdo
+# V DO
 
 [![Build Status](https://github.com/FloVanGH/vdo/workflows/CI/badge.svg)](https://github.com/FloVanGH/vdo/commits/main)
 
