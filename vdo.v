@@ -101,7 +101,7 @@ fn on_scroll(e ui.ScrollEvent, w &ui.Window) {
 		return
 	}
 
-	s.margins.top -= f32(e.y)
+	s.margins.top = f32_min(0, s.margins.top - f32(e.y))
 
 	w.update_layout()
 }
