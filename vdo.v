@@ -101,7 +101,18 @@ fn on_scroll(e ui.ScrollEvent, w &ui.Window) {
 		return
 	}
 
-	s.margins.top = f32_min(0, s.margins.top - f32(e.y))
+	mut content_height := 0
+
+	for mut c in s.children {
+		_, h := c.size()
+		content_height += h
+	}
+
+	if s.real_height - content_height >= 0 {
+		s.margins.top = 0
+	} else {
+		s.margins.top = f32_max(f32_min(0, s.margins.top - f32(e.y)), s.real_height - content_height)
+	}
 
 	w.update_layout()
 }
