@@ -19,4 +19,8 @@ fns.txt
 modules
 devel
 
-*.log
+vls.log
+
+# build files‚
+vdo
+vdo.dSYM
