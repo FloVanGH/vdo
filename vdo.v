@@ -15,6 +15,7 @@ mut:
 struct State {
 mut:
 	tasks  []Task
+	input  string
 	window &ui.Window = voidptr(0)
 }
 
@@ -41,7 +42,12 @@ fn main() {
 		on_scroll: on_scroll
 	}, [
 		ui.column({ margin_: 8, heights: [ui.stretch, ui.compact] }, [
-			ui.column({ heights: ui.compact }, tasks(app)), ui.button(text: '+', onclick: add_task)]),
+			ui.column({ heights: ui.compact, spacing: 4 }, tasks(app)),
+			ui.row({ widths: [ui.stretch, ui.compact], spacing: 4 }, [
+				ui.textbox(text: &app.input, on_enter: on_enter),
+				ui.button(text: '+', onclick: on_add_task),
+			]),
+		]),
 	])
 
 	app.window = window
@@ -59,9 +65,10 @@ fn tasks(app &State) []ui.Widget {
 }
 
 fn entry(task Task) &ui.Stack {
-	return ui.row({}, [
+	return ui.row({ widths: [ui.compact, ui.stretch, ui.compact], spacing: 4 }, [
 		ui.checkbox(checked: task.done),
 		ui.label(text: task.title),
+		ui.button(text: 'E'),
 	])
 }
 
@@ -74,14 +81,17 @@ fn entries_column(w &ui.Window) ?&ui.Stack {
 	return error('Cannot find entries column')
 }
 
-fn add_task(mut app State, btn &ui.Button) {
+fn on_add_task(mut app State, btn &ui.Button) {
+	add_task(mut app, btn.ui.window)
+}
+
+fn add_task(mut app State, window &ui.Window) {
 	new_task := Task{
-		title: 'new'
+		title: app.input
 		done: false
 	}
 	app.tasks << new_task
-
-	window := btn.ui.window
+	app.input = ''
 
 	mut s := entries_column(window) or {
 		println(err)
@@ -115,4 +125,8 @@ fn on_scroll(e ui.ScrollEvent, w &ui.Window) {
 	}
 
 	w.update_layout()
+}
+
+fn on_enter(_ string, mut app State) {
+	add_task(mut app, app.window)
 }
