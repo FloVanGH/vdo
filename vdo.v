@@ -45,7 +45,7 @@ fn main() {
 			ui.column({ heights: ui.compact, spacing: 4 }, tasks(app)),
 			ui.row({ widths: [ui.stretch, ui.compact], spacing: 4 }, [
 				ui.textbox(text: &app.input, on_enter: on_enter),
-				ui.button(text: '+', onclick: on_add_task),
+				ui.button(text: '+', onclick: btn_add_task),
 			]),
 		]),
 	])
@@ -81,7 +81,7 @@ fn entries_column(w &ui.Window) ?&ui.Stack {
 	return error('Cannot find entries column')
 }
 
-fn on_add_task(mut app State, btn &ui.Button) {
+fn btn_add_task(mut app State, btn &ui.Button) {
 	add_task(mut app, btn.ui.window)
 }
 
