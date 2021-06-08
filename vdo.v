@@ -17,7 +17,10 @@ mut:
 	tasks      []Task
 	input      string
 	edit_input string
+	edit_index int        = -1
 	window     &ui.Window = voidptr(0)
+
+	edit bool // workaround prevent double call of click handler
 }
 
 fn main() {
@@ -76,9 +79,9 @@ fn entry(task Task) &ui.Stack {
 fn edit_entry(mut app State, task Task) &ui.Stack {
 	app.edit_input = task.title
 
-	return ui.row({ widths: [ui.compact, ui.stretch], spacing: 4 }, [
-		ui.textbox(text: &app.edit_input),
-		ui.button(text: 'D'),
+	return ui.row({ widths: [ui.stretch, ui.compact], spacing: 4 }, [
+		ui.textbox(text: &app.edit_input, on_enter: txb_enter_edit, is_focused: true),
+		ui.button(text: 'D', onclick: btn_remove_task),
 	])
 }
 
@@ -96,26 +99,80 @@ fn btn_add_task(mut app State, btn &ui.Button) {
 }
 
 fn btn_edit_task(mut app State, btn &ui.Button) {
-	mut row := btn.parent
+	row := btn.parent
+
+	if mut row is ui.Stack {
+		id := row.id
+		mut column := row.parent
+
+		if mut column is ui.Stack {
+			index := child_index(column, id)
+			if index > -1 {
+				column.remove(at: index)
+				column.add(at: index, child: edit_entry(mut app, app.tasks[index]))
+				app.edit = true
+				app.edit_index = index
+			}
+		}
+	}
+}
+
+fn btn_remove_task(mut app State, btn &ui.Button) {
+	if app.edit {
+		app.edit = false
+		return
+	}
+
+	row := btn.parent
 
 	if mut row is ui.Stack {
 		mut column := row.parent
 
-		// i := column.get_children().index(row)
+		if mut column is ui.Stack {
+			if app.edit_index > -1 {
+				column.remove(at: app.edit_index)
+				app.tasks.delete(app.edit_index)
+				app.edit_index = -1
+			}
+		}
+	}
+}
 
-		// if mut column is ui.Stack {
-		// 	i := column.children.index(row)
-		// 	// column.remove(at: i)
-		// }
+fn txb_enter_edit(text string, mut app State) {
+	if app.edit_index < 0 {
+		return
 	}
 
-	// if mut parent is ui.Stack {
-	// 	if mut
-	// 	for _ in 0 .. (parent.children.len + 2) {
-	// 		println('remove')
-	// 		parent.remove(at: 0)
-	// 	}
-	// }
+	app.tasks[app.edit_index].title = text
+
+	mut s := entries_column(app.window) or {
+		println(err)
+		return
+	}
+
+	s.remove(at: app.edit_index)
+	s.add(
+		at: app.edit_index
+		child: entry(app.tasks[app.edit_index])
+	)
+
+	// app.window.unfocus_all()
+	app.edit_index = -1
+}
+
+// Gets the index of child by id on the given stack. If the child is not found -1 will be returned.
+fn child_index(parent &ui.Stack, id string) int {
+	for i in 0 .. parent.children.len {
+		child := parent.children[i]
+
+		if child is ui.Stack {
+			if child.id == id {
+				return i
+			}
+		}
+	}
+
+	return -1
 }
 
 fn add_task(mut app State, window &ui.Window) {
