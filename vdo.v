@@ -68,7 +68,7 @@ fn entry(task Task) &ui.Stack {
 	return ui.row({ widths: [ui.compact, ui.stretch, ui.compact], spacing: 4 }, [
 		ui.checkbox(checked: task.done),
 		ui.label(text: task.title),
-		ui.button(text: 'E'),
+		ui.button(text: 'E', onclick: btn_edit_task),
 	])
 }
 
@@ -83,6 +83,9 @@ fn entries_column(w &ui.Window) ?&ui.Stack {
 
 fn btn_add_task(mut app State, btn &ui.Button) {
 	add_task(mut app, btn.ui.window)
+}
+
+fn btn_edit_task(mut app State, btn &ui.Button) {
 }
 
 fn add_task(mut app State, window &ui.Window) {
