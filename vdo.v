@@ -14,9 +14,10 @@ mut:
 
 struct State {
 mut:
-	tasks  []Task
-	input  string
-	window &ui.Window = voidptr(0)
+	tasks      []Task
+	input      string
+	edit_input string
+	window     &ui.Window = voidptr(0)
 }
 
 fn main() {
@@ -72,6 +73,15 @@ fn entry(task Task) &ui.Stack {
 	])
 }
 
+fn edit_entry(mut app State, task Task) &ui.Stack {
+	app.edit_input = task.title
+
+	return ui.row({ widths: [ui.compact, ui.stretch], spacing: 4 }, [
+		ui.textbox(text: &app.edit_input),
+		ui.button(text: 'D'),
+	])
+}
+
 fn entries_column(w &ui.Window) ?&ui.Stack {
 	s := w.child(0)
 	if mut s is ui.Stack {
@@ -86,6 +96,26 @@ fn btn_add_task(mut app State, btn &ui.Button) {
 }
 
 fn btn_edit_task(mut app State, btn &ui.Button) {
+	mut row := btn.parent
+
+	if mut row is ui.Stack {
+		mut column := row.parent
+
+		// i := column.get_children().index(row)
+
+		// if mut column is ui.Stack {
+		// 	i := column.children.index(row)
+		// 	// column.remove(at: i)
+		// }
+	}
+
+	// if mut parent is ui.Stack {
+	// 	if mut
+	// 	for _ in 0 .. (parent.children.len + 2) {
+	// 		println('remove')
+	// 		parent.remove(at: 0)
+	// 	}
+	// }
 }
 
 fn add_task(mut app State, window &ui.Window) {
